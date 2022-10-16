@@ -87,6 +87,38 @@ async function goUrl(req, res){
     }catch(error) {
         return res.status(500).send(error.message);
       };
-}
+};
 
-export {shorter, showUrl, goUrl};
+async function deleteUrl(req,res){
+    const {authorization} = req.headers;
+    const token = authorization?.replace('Bearer ', '');
+    const {id} = req.params;
+    
+
+    if(!token) {
+        return res.sendStatus(401);
+    };
+
+    try{
+        const userId = await connection.query(`SELECT "userId" FROM sessions WHERE tolken = $1;`,[token]);
+        if(userId.rows.length< 1){
+            return res.sendStatus(401);
+        }
+
+        const userLink = await connection.query(`SELECT * FROM links WHERE id = $1`, [id]);
+        if(userLink.rows.length< 1){
+            return res.sendStatus(404);    
+        }
+        if(userLink.rows[0].userId !== userId.rows[0].userId){
+            return res.sendStatus(401);    
+        }
+
+        await connection.query(`DELETE FROM links WHERE id = $1`, [id])
+        res.sendStatus(204);
+        
+    }catch(error) {
+        return res.status(500).send(error.message);
+      };
+};
+
+export {shorter, showUrl, goUrl, deleteUrl};
