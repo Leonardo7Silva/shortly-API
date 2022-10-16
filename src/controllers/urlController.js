@@ -71,4 +71,22 @@ async function showUrl(req, res){
       };
 }
 
-export {shorter, showUrl};
+async function goUrl(req, res){
+    const { shortUrl } = req.params
+    try{
+        const url = await connection.query(`SELECT * FROM links WHERE "shortUrl" = $1`, [shortUrl]);
+        if(!url.rows[0]){
+            return res.sendStatus(404); 
+        }
+        const addOne = url.rows[0].counter +1;
+        const link = url.rows[0].url;
+
+        await connection.query(`UPDATE links SET counter = $1 WHERE "shortUrl" = $2;`, [addOne, shortUrl]);
+        
+        res.redirect(link);
+    }catch(error) {
+        return res.status(500).send(error.message);
+      };
+}
+
+export {shorter, showUrl, goUrl};
