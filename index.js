@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 import singUpRouter from "./src/routes/singUpRouter.js";
 import singInRouter from "./src/routes/singInRouter.js";
 import urlRouter from "./src/routes/urlRouter.js";
-import usersRouter from "./src/routes/usersRouter.js"
+import usersRouter from "./src/routes/usersRouter.js";
+import recordRouter from "./src/routes/recordRouter.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ server.use(singUpRouter);
 server.use(singInRouter);
 server.use(urlRouter);
 server.use(usersRouter);
+server.use(recordRouter);
 
 
 server.listen(process.env.PORT, ()=>{
